@@ -199,8 +199,8 @@ if __name__ == '__main__':
     optim_epochs = 10  # optimization epoch number for PPO
     optim_batch_size = 64  # optimization batch size for PPO
     cv = 0  # cross validation process [0, 1, 2, 3, 4]
-    size = 1000  # size of training data [100, 1000, 10000]
-    max_iter_num = 2000  # maximal number of main iterations {100size: 1000, 1000size: 2000, 10000size: 3000}
+    size = 10000  # size of training data [100, 1000, 10000]
+    max_iter_num = 3000  # maximal number of main iterations {100size: 1000, 1000size: 2000, 10000size: 3000}
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     """environment"""

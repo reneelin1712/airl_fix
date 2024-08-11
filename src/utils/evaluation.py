@@ -171,7 +171,7 @@ def evaluate_metrics(test_traj, learner_traj):
     return edit_dist, bleu_score, js_dist
 
 
-def evaluate_model(target_od, target_traj, model, env, n_link=424):
+def evaluate_model(target_od, target_traj, model, env, n_link=437):
     state_ts = torch.from_numpy(np.arange(n_link)).long().to(device)
     target_o, target_d = target_od[:, 0].tolist(), target_od[:, 1].tolist()
     target_time_steps = target_od[:, 2].tolist()
