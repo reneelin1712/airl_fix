@@ -23,16 +23,43 @@ def load_path_feature(path_feature_path):
     return path_feature, path_feature_max, path_feature_min
 
 
+# def load_link_feature(edge_path):
+#     edge_df = pd.read_csv(edge_path, usecols=['highway', 'length', 'n_id'], dtype={'highway': str})
+#     # if highway is a list, we define it as the first element of the list
+#     edge_df['highway'] = edge_df['highway'].apply(lambda loc: (loc.split(',')[0])[2:-1] if ',' in loc else loc)
+#     level2idx = {'residential': 0, 'primary': 1, 'unclassified': 2, 'tertiary': 3, 'living_street': 4, 'secondary': 5}
+#     edge_df['highway_idx'] = edge_df['highway'].apply(lambda loc: level2idx.get(loc,2))
+#     highway_idx = np.eye(6)[edge_df['highway_idx'].values]
+#     edge_feature = np.concatenate([np.expand_dims(edge_df['length'].values, 1), highway_idx], 1)
+#     edge_feature_max, edge_feature_min = np.max(edge_feature, 0), np.min(edge_feature, 0)
+#     print('edge_feature', edge_feature.shape)
+#     return edge_feature, edge_feature_max, edge_feature_min
 def load_link_feature(edge_path):
-    edge_df = pd.read_csv(edge_path, usecols=['highway', 'length', 'n_id'], dtype={'highway': str})
-    # if highway is a list, we define it as the first element of the list
+    # Read the edge file including the 'Ratio' column
+    edge_df = pd.read_csv(edge_path, usecols=['highway', 'length', 'n_id', 'Ratio'], dtype={'highway': str})
+    
+    # If highway is a list, define it as the first element of the list
     edge_df['highway'] = edge_df['highway'].apply(lambda loc: (loc.split(',')[0])[2:-1] if ',' in loc else loc)
+    
+    # Mapping of highway types to indices
     level2idx = {'residential': 0, 'primary': 1, 'unclassified': 2, 'tertiary': 3, 'living_street': 4, 'secondary': 5}
-    edge_df['highway_idx'] = edge_df['highway'].apply(lambda loc: level2idx.get(loc,2))
+    edge_df['highway_idx'] = edge_df['highway'].apply(lambda loc: level2idx.get(loc, 2))
+    
+    # One-hot encoding for highway types
     highway_idx = np.eye(6)[edge_df['highway_idx'].values]
-    edge_feature = np.concatenate([np.expand_dims(edge_df['length'].values, 1), highway_idx], 1)
+    
+    # Concatenate length, highway type, and ratio into the edge feature array
+    edge_feature = np.concatenate([
+        np.expand_dims(edge_df['length'].values, 1),  # Add length
+        highway_idx,  # Add one-hot encoded highway types
+        np.expand_dims(edge_df['Ratio'].values, 1)  # Add ratio
+    ], 1)
+    
+    # Calculate the max and min of each feature for normalization purposes
     edge_feature_max, edge_feature_min = np.max(edge_feature, 0), np.min(edge_feature, 0)
+    
     print('edge_feature', edge_feature.shape)
+    
     return edge_feature, edge_feature_max, edge_feature_min
 
 
